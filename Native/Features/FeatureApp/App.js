@@ -20,12 +20,12 @@ const [loading, setLoading]=useState(true);
 useEffect(() => {
 init()
 .then(()=>setLoading(false))
-.catch((err)=>console.log("THIIIIIIIIIIIIIIIIIIIII",err))
+.catch((err)=>console.log("Errors:",err))
 }, [])
 
-if(loading){
-  return <AppLoading/>
-}
+// if(loading){
+//   return <AppLoading/>
+// }
 
   return (
     <>
@@ -41,7 +41,7 @@ if(loading){
         component={AllPlaces} />
 
       <Stack.Screen  name="addPlace"  component={AddPlace} />
-      <Stack.Screen  name="map" component={MapScreen} />
+      <Stack.Screen  name="map"  component={MapScreen} />
 
 
     </Stack.Navigator>

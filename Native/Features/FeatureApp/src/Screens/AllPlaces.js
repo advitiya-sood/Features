@@ -2,11 +2,12 @@ import { View, Text, FlatList, StyleSheet } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import PlaceItem from '../Components/PlaceItem'
 import {useRoute,useIsFocused } from '@react-navigation/native';
+import { fetchData } from '../Util/database';
 
 export default function AllPlaces() {
 
 const [places,setPlaces]=useState([])
-const route=useRoute();
+const isfocused=useIsFocused()
 
 // if(!places || places.length===0){
 //     return(
@@ -17,10 +18,12 @@ const route=useRoute();
 // }
 
 useEffect(() => {
-    if(route.params){
-        setPlaces([...places,route.params])
+    const fetchHelper=async()=>{                     //fetching the places from the db
+      const places= await fetchData()
+      setPlaces(places)
     }
-}, [route.params])
+    fetchHelper()
+}, [isfocused])
 
 
   return (

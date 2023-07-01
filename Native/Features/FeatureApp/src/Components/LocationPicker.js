@@ -12,9 +12,9 @@ export default function LocationPicker({getLocationInfo,handleReadableLocation})
     const isfocused=useIsFocused();
     
 
-async function getMap(lat,log){
+async function getMap(lat,lon){
 
-    const map=`https://maps.geoapify.com/v1/staticmap?style=osm-carto&width=600&height=400&center=lonlat:${log},${lat}&zoom=14&marker=lonlat:${log},${lat};color:%23ff0000;size:medium&apiKey=dc913449a4d04dbfb5882381a98f7a7b`
+    const map=`https://maps.geoapify.com/v1/staticmap?style=osm-carto&width=600&height=400&center=lonlat:${lon},${lat}&zoom=14&marker=lonlat:${lon},${lat};color:%23ff0000;size:medium&apiKey=dc913449a4d04dbfb5882381a98f7a7b`
 
     return map;
 }
@@ -40,9 +40,9 @@ async function  handleCurrentLocation(){
 
     if(hasPermission){
         let mapLocation=await getCurrentPositionAsync({})
-        setLocation({
+        setLocation({                                              //setting the location co-ordinates
             lat: mapLocation.coords.latitude,
-            log:mapLocation.coords.longitude
+            lon: mapLocation.coords.longitude
         })
     }
         
@@ -57,7 +57,7 @@ useEffect(() => {
 route.params &&
     setLocation({
         lat:route.params.latitude,
-        log:route.params.longitude
+        lon:route.params.longitude
     })
  
 }, [isfocused])
@@ -75,7 +75,7 @@ useEffect(() => {
         <View style={Styles.map} >
             { location?
             // <ActivityIndicator   size="large" color="black" />
-            <Image   style={Styles.image}  source={{uri:getMap(location.lat,location.log)._z}}/>
+            <Image   style={Styles.image}  source={{uri:getMap(location.lat,location.lon)._z}}/>
                 :
                 <Text>Select a location</Text>
 

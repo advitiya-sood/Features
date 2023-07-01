@@ -5,6 +5,7 @@ import { PermissionStatus, launchCameraAsync, useCameraPermissions } from 'expo-
 import LocationPicker from '../Components/LocationPicker';
 import { Button, Icon } from '@rneui/base';
 import { Place } from '../Model/place';
+import { insertPlaces } from '../Util/database';
 
 export default function AddPlace({navigation}) {
     const [cameraPermissionStatus,requestPermission]=useCameraPermissions();
@@ -48,8 +49,8 @@ const  handleImagePicker= async()=>{
     setForm({...form,["image"]:camera.uri})
 }
 
-const handleReadableLocation= async()=>{
-   const response= await fetch(`https://api.geoapify.com/v1/geocode/reverse?lat=${form.location.lat}&lon=${form.location.log}&apiKey=dc913449a4d04dbfb5882381a98f7a7b`)
+const handleReadableLocation= async()=>{                      //reverse geocoding api 
+   const response= await fetch(`https://api.geoapify.com/v1/geocode/reverse?lat=${form.location.lat}&lon=${form.location.lon}&apiKey=dc913449a4d04dbfb5882381a98f7a7b`)
 
    if(!response.ok){
     throw new Error("Filed to fetch data")
@@ -72,9 +73,10 @@ useEffect(() => {
 }, [form.location])
 
 
-const handleSave=()=>{
+const handleSave=async()=>{
     const place= new Place(form.title,form.image,form.address,form.location);
-    navigation.navigate("allPlaces",place)
+           await insertPlaces(place)                                               //inserting the places into the db
+    navigation.navigate("allPlaces")
 }
 
 
@@ -90,14 +92,16 @@ if(imageUri){
       style={Styles.input} />
       {imageBox}
       <ImagePicker  onPress={handleImagePicker}  />
-      <LocationPicker   getLocationInfo={(loc)=>setForm({...form,["location"]:loc})} />
-        <View style={{position:"relative", bottom:-65}} >
+      
+       <LocationPicker   getLocationInfo={(loc)=>setForm({...form,["location"]:loc})} />
 
+        <View style={{position:"relative", bottom:-65}} >
       <Button radius={'sm'} color="#D2BBDC"  type="solid" onPress={handleSave} style={Styles.saveButton}  >
            <Text style={{fontSize:18, fontWeight:"600" }} >Save</Text>
             <Icon name="save" color="black"  />
         </Button>
         </View>
+
     </View>
   )
 }
@@ -129,7 +133,6 @@ const Styles=StyleSheet.create({
     },
     saveButton:{
         width:"80%",
-        color:"black"
-        
+        color:"black"    
     }
 })
